@@ -1,0 +1,36 @@
+{
+  "settings": {
+    "days_back": 14,
+    "max_items_per_feed": 40,
+    "max_summary_chars": 280,
+    "timeout_seconds": 40
+  },
+
+  "feeds": [
+    {"name": "pv magazine Deutschland", "url": "https://www.pv-magazine.de/feed/", "category": "Erneuerbare"},
+    {"name": "Solarserver", "url": "https://www.solarserver.de/feed/", "category": "Erneuerbare"},
+    {"name": "Energiezukunft", "url": "https://www.energiezukunft.eu/feed/", "category": "Erneuerbare"},
+    {"name": "H2News", "url": "https://h2-news.de/feed/", "category": "Wasserstoff"}
+  ],
+
+  "trusted_domains": [
+    "pv-magazine.de", "solarserver.de", "windkraft-journal.de", "energiezukunft.eu",
+    "h2-news.de", "zfk.de", "energie-und-management.de", "iwr.de", "energate-messenger.de",
+    "erneuerbareenergien.de", "photovoltaik.eu", "vgb.org", "fraunhofer.de",
+    "bdew.de", "vku.de", "wind-energie.de", "bee-ev.de", "dvgw.de",
+    "agora-energiewende.de", "dena.de", "bundesnetzagentur.de", "ise.fraunhofer.de"
+  ],
+
+  "searches": [
+    {"name": "Suche: Wasserstoff", "category": "Wasserstoff",
+     "keywords": ["Wasserstoff", "Elektrolyseur", "Elektrolyse", "Wasserstoffkernnetz", "Brennstoffzelle"]},
+    {"name": "Suche: Kraftwerke", "category": "Kraftwerke & Netze",
+     "keywords": ["Kraftwerksstrategie", "Gaskraftwerk", "Kraftwerk", "Gasturbine", "Kapazitätsmarkt", "Kohleausstieg"]},
+    {"name": "Suche: Netze & Speicher", "category": "Kraftwerke & Netze",
+     "keywords": ["Netzausbau", "Stromnetz", "Batteriespeicher", "Redispatch", "Netzentgelte"]},
+    {"name": "Suche: Erneuerbare", "category": "Erneuerbare",
+     "keywords": ["Offshore-Wind", "Windkraft", "Photovoltaik", "Windenergie Ausbau", "Solarpark"]},
+    {"name": "Suche: Energiewirtschaft", "category": "Energiewirtschaft",
+     "keywords": ["Energiewirtschaft", "Strommarkt", "Energiewende", "EEG", "Strompreis"]}
+  ]
+}

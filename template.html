@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energie-Radar</title>
+<style>
+  :root { --bg:#f6f7f4; --card:#fff; --text:#1c2321; --muted:#667; --line:#dde1da; --accent:#1f7a5a; --chip:#e6efe9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14181a; --card:#1d2326; --text:#e8ecea; --muted:#98a3a0; --line:#2c3437; --accent:#4cc79a; --chip:#23302b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 system-ui, sans-serif; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+  header { padding: 28px 0 12px; }
+  h1 { margin:0; font-size: 1.6rem; }
+  .sub { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+  .controls { position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 2; }
+  input[type=search] { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px;
+    background:var(--card); color:var(--text); font-size:1rem; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .chip { border:1px solid var(--line); background:var(--card); color:var(--text); padding:4px 12px;
+    border-radius:999px; font-size:.85rem; cursor:pointer; }
+  .chip.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .day { margin:22px 0 6px; font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  article { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
+  article a { color:var(--text); text-decoration:none; font-weight:600; }
+  article a:hover { color:var(--accent); text-decoration:underline; }
+  .meta { font-size:.8rem; color:var(--muted); margin-top:2px; display:flex; gap:8px; flex-wrap:wrap; }
+  .tag { background:var(--chip); color:var(--accent); padding:0 8px; border-radius:999px; }
+  p { margin:6px 0 0; font-size:.92rem; color:var(--muted); }
+  details { margin-top:32px; font-size:.85rem; color:var(--muted); }
+  .empty { text-align:center; color:var(--muted); padding:40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Energie-Radar</h1>
+    <div class="sub" id="sub"></div>
+  </header>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Suchen, z. B. Elektrolyseur, Gasturbine, Offshore …">
+    <div class="chips" id="chips"></div>
+  </div>
+  <main id="list"></main>
+  <details><summary>Quellenstatus</summary><ul id="status"></ul></details>
+</div>
+<script>
+const DATA = /*DATA*/null;
+const cats = ["Alle", ...new Set(DATA.articles.map(a => a.category))];
+let cat = "Alle", term = "";
+const fmtDay = d => new Date(d).toLocaleDateString("de-DE", {weekday:"long", day:"numeric", month:"long"});
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+document.getElementById("sub").textContent =
+  DATA.articles.length + " Artikel · Stand " + new Date(DATA.generated).toLocaleString("de-DE");
+
+const chips = document.getElementById("chips");
+cats.forEach(c => {
+  const b = document.createElement("button");
+  b.className = "chip" + (c === cat ? " on" : "");
+  b.textContent = c;
+  b.onclick = () => { cat = c; [...chips.children].forEach(x => x.classList.toggle("on", x.textContent === c)); render(); };
+  chips.appendChild(b);
+});
+document.getElementById("q").oninput = e => { term = e.target.value.toLowerCase(); render(); };
+
+function render() {
+  const rows = DATA.articles.filter(a =>
+    (cat === "Alle" || a.category === cat) &&
+    (!term || (a.title + " " + a.summary + " " + a.source).toLowerCase().includes(term)));
+  const el = document.getElementById("list");
+  if (!rows.length) { el.innerHTML = '<div class="empty">Keine Treffer.</div>'; return; }
+  let html = "", lastDay = "";
+  for (const a of rows) {
+    const day = fmtDay(a.date);
+    if (day !== lastDay) { html += '<div class="day">' + day + "</div>"; lastDay = day; }
+    html += '<article><a href="' + esc(a.link) + '" target="_blank" rel="noopener">' + esc(a.title) + "</a>" +
+      '<div class="meta"><span>' + esc(a.source) + '</span><span class="tag">' + esc(a.category) + "</span></div>" +
+      (a.summary ? "<p>" + esc(a.summary) + "</p>" : "") + "</article>";
+  }
+  el.innerHTML = html;
+}
+render();
+
+document.getElementById("status").innerHTML = DATA.status.map(s =>
+  "<li>" + esc(s.name) + ": " + (s.error ? "Fehler (" + esc(s.error) + ")" : s.count + " Einträge") + "</li>").join("");
+</script>
+</body>
+</html>
